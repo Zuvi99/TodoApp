@@ -5,14 +5,30 @@ import {
     Heading,
     HStack,
     Input,
-    useColorMode,
+    // useColorMode,
     VStack
 } from "@chakra-ui/react";
-import {useState} from "react";
+import { MdDelete } from "react-icons/md"
+import {useEffect, useState} from "react";
 
 function App() {
-    const { colorMode, toggleColorMode } = useColorMode();
-    const [newItem, setNewItem] = useState("")
+    // const { colorMode, toggleColorMode } = useColorMode();
+    const [newTask, setNewTask] = useState<string>("");
+    const [tasks, setTasks] = useState<Array<any>>([]);
+    function handleSubmit() {
+        setTasks(currentTasks => {
+            return [
+                ...currentTasks,
+                {id: crypto.randomUUID(), title: newTask},
+            ]
+        })
+    }
+
+    function deleteTask(id: number) {
+        setTasks(currentTasks => {
+            return currentTasks.filter(task => task.id !== id)
+        })
+    }
 
     return (
         <>
@@ -26,37 +42,50 @@ function App() {
                             <VStack>
                                 <Box>
                                     <FormLabel fontWeight={"bold"}>New Task</FormLabel>
-                                    < Input width={"500px"}/>
+                                    <Input
+                                        value={newTask}
+                                        onChange={event => setNewTask(event.target.value)}
+                                        width={"500px"}
+                                    />
                                 </Box>
                                 <Box width={"100%"}>
                                     <Button
-                                        // onClick={}
+                                        onClick={handleSubmit}
                                         width={"100%"}
                                     >Add Task</Button>
                                 </Box>
-                                <Box width={"100%"}>
+                                <Box width={"100%"} marginTop={"100px"}>
                                     <Heading>Tasks</Heading>
                                 </Box>
                                 <Box width={"100%"}>
                                     <VStack>
                                         <Box width={"100%"}>
-                                            <Checkbox colorScheme={"green"}>
-                                                Item 1
-                                            </Checkbox>
-                                            <Button marginLeft={"25px"} size={"sm"}>Delete</Button>
+                                            {tasks.length === 0 && "No Tasks to complete."}
+                                            {tasks.map(task => {
+                                                return (
+                                                    <Box>
+                                                        <Checkbox
+                                                            marginLeft={"25px"}
+                                                            marginBottom={"15px"}
+                                                            colorScheme={"green"}
+                                                            key={task.id}
+                                                        >
+                                                            {task.title}
+                                                        </Checkbox>
+                                                        <Button
+                                                            marginLeft={"15px"}
+                                                            leftIcon={<MdDelete />}
+                                                            size={"xs"}
+                                                            colorScheme={'red'}
+                                                            onClick={() => deleteTask(task.id)}
+                                                        >Delete</Button>
+                                                    </Box>
+                                                )
+                                            })}
                                         </Box>
                                     </VStack>
                                 </Box>
                             </VStack>
-
-                        </Box>
-                        <Box>
-                            <Button
-                                size={"md"}
-                                onClick={toggleColorMode}
-                            >
-                                {colorMode === "light" ? "Dark" : "Light"} Mode
-                            </Button>
                         </Box>
                     </HStack>
                 </VStack>
