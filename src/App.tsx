@@ -1,7 +1,7 @@
 import {
-    Box,
+    Box, Button,
     Heading,
-    HStack,
+    HStack, useColorMode,
     // useColorMode,
     VStack
 } from "@chakra-ui/react";
@@ -10,7 +10,7 @@ import {NewTaskForm} from "./TaskForm.tsx";
 import {TaskList} from "./TaskList.tsx";
 
 function App() {
-    // const { colorMode, toggleColorMode } = useColorMode();
+    const { colorMode, toggleColorMode } = useColorMode();
     const [tasks, setTasks] = useState<Array<any>>(() => {
         const localValue = localStorage.getItem("ITEMS")
         if (localValue == null) return []
@@ -44,7 +44,22 @@ function App() {
                     <HStack width={"100%"} spacing={"70%"}>
                         <Box>
                             <VStack>
-                                <NewTaskForm onSubmit={addTask}/>
+                                <Box>
+                                    <HStack width={"100%"}>
+                                        <Box>
+                                            <NewTaskForm onSubmit={addTask}/>
+                                        </Box>
+                                        <Box marginLeft={"900px"}>
+                                            <Button
+                                                size={"md"}
+                                                onClick={toggleColorMode}
+                                            >
+                                                {colorMode === "light" ? "Dark" : "Light"} Mode
+                                            </Button>
+                                        </Box>
+                                    </HStack>
+                                </Box>
+
                                 <Box width={"100%"} marginTop={"100px"}>
                                     <Heading>Tasks</Heading>
                                 </Box>

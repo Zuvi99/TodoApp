@@ -18,7 +18,8 @@ export function NewTaskForm({onSubmit} : any) {
                     onChange={event => setNewTask(event.target.value)}
                  width={"500px"}/>
             </Box>
-            <Box width={"100%"}>
+            <Box width={"100%"} marginTop={"20px"}
+            >
                 <Button
                     onClick={handleSubmit}
                     width={"100%"}

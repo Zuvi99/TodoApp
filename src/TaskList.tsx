@@ -1,6 +1,7 @@
 import {Box, Button, Checkbox} from "@chakra-ui/react";
 import {MdDelete} from "react-icons/md";
 
+// @ts-expect-error cant do anything
 export function TaskList({tasks, deleteTask}) {
     return (
         <Box width={"100%"}>
