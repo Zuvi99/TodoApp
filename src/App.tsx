@@ -1,29 +1,34 @@
 import {
     Box,
-    Button, Checkbox,
-    FormLabel,
     Heading,
     HStack,
-    Input,
     // useColorMode,
     VStack
 } from "@chakra-ui/react";
-import { MdDelete } from "react-icons/md"
 import {useEffect, useState} from "react";
+import {NewTaskForm} from "./TaskForm.tsx";
+import {TaskList} from "./TaskList.tsx";
 
 function App() {
     // const { colorMode, toggleColorMode } = useColorMode();
-    const [newTask, setNewTask] = useState<string>("");
-    const [tasks, setTasks] = useState<Array<any>>([]);
-    function handleSubmit() {
-        setTasks(currentTasks => {
-            return [
-                ...currentTasks,
-                {id: crypto.randomUUID(), title: newTask},
-            ]
-        })
-    }
+    const [tasks, setTasks] = useState<Array<any>>(() => {
+        const localValue = localStorage.getItem("ITEMS")
+        if (localValue == null) return []
+        return JSON.parse(localValue)
+    });
 
+    useEffect(() => {
+        localStorage.setItem("ITEMS", JSON.stringify(tasks))
+    }, [tasks]);
+
+    function addTask(title: never) {
+            setTasks(currentTasks => {
+                return [
+                    ...currentTasks,
+                    {id: crypto.randomUUID(), title},
+                ]
+            })
+        }
     function deleteTask(id: number) {
         setTasks(currentTasks => {
             return currentTasks.filter(task => task.id !== id)
@@ -31,7 +36,6 @@ function App() {
     }
 
     return (
-        <>
             <Box
                 width={"100%"}
                 margin={"50px"}
@@ -40,49 +44,13 @@ function App() {
                     <HStack width={"100%"} spacing={"70%"}>
                         <Box>
                             <VStack>
-                                <Box>
-                                    <FormLabel fontWeight={"bold"}>New Task</FormLabel>
-                                    <Input
-                                        value={newTask}
-                                        onChange={event => setNewTask(event.target.value)}
-                                        width={"500px"}
-                                    />
-                                </Box>
-                                <Box width={"100%"}>
-                                    <Button
-                                        onClick={handleSubmit}
-                                        width={"100%"}
-                                    >Add Task</Button>
-                                </Box>
+                                <NewTaskForm onSubmit={addTask}/>
                                 <Box width={"100%"} marginTop={"100px"}>
                                     <Heading>Tasks</Heading>
                                 </Box>
                                 <Box width={"100%"}>
                                     <VStack>
-                                        <Box width={"100%"}>
-                                            {tasks.length === 0 && "No Tasks to complete."}
-                                            {tasks.map(task => {
-                                                return (
-                                                    <Box>
-                                                        <Checkbox
-                                                            marginLeft={"25px"}
-                                                            marginBottom={"15px"}
-                                                            colorScheme={"green"}
-                                                            key={task.id}
-                                                        >
-                                                            {task.title}
-                                                        </Checkbox>
-                                                        <Button
-                                                            marginLeft={"15px"}
-                                                            leftIcon={<MdDelete />}
-                                                            size={"xs"}
-                                                            colorScheme={'red'}
-                                                            onClick={() => deleteTask(task.id)}
-                                                        >Delete</Button>
-                                                    </Box>
-                                                )
-                                            })}
-                                        </Box>
+                                        <TaskList tasks={tasks} deleteTask={deleteTask}/>
                                     </VStack>
                                 </Box>
                             </VStack>
@@ -90,8 +58,6 @@ function App() {
                     </HStack>
                 </VStack>
             </Box>
-        </>
-
     )
 }
 export default App
